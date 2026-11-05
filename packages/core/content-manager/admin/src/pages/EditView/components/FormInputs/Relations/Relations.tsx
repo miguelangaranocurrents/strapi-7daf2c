@@ -752,7 +752,13 @@ const RelationModalWithContext = ({
 
   React.useLayoutEffect(() => {
     setTextValue('');
-  }, [fieldValue]);
+    /**
+     * Once the field value changes (e.g. a relation was selected), the previous search term
+     * no longer applies. Reset it so the available relations are refetched right away and
+     * reopening the dropdown lists the remaining entries instead of stale search results.
+     */
+    setSearchParams((s) => (s._q === '' && s.page === 1 ? s : { ...s, _q: '', page: 1 }));
+  }, [fieldValue, setSearchParams]);
 
   const handleSearch = async (search: string) => {
     setSearchParams((s) => ({ ...s, _q: search, page: 1 }));
